@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 
 class OptionItem {
   OptionItem({
-    required this.onTap,
-    required this.iconData,
-    required this.title,
+     this.onTap,
+     this.iconData,
+     this.title,
     this.subtitle,
   });
 
-  Function()? onTap;
+  Function() onTap;
   IconData iconData;
   String title;
-  String? subtitle;
+  String subtitle;
 
   OptionItem copyWith({
-    Function()? onTap,
-    IconData? iconData,
-    String? title,
-    String? subtitle,
+    Function() onTap,
+    IconData iconData,
+    String title,
+    String subtitle,
   }) {
     return OptionItem(
       onTap: onTap ?? this.onTap,

@@ -7,22 +7,22 @@ import 'package:video_player/video_player.dart';
 class VideoProgressBar extends StatefulWidget {
   VideoProgressBar(
     this.controller, {
-    ChewieProgressColors? colors,
+    ChewieProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
-    Key? key,
-    required this.barHeight,
-    required this.handleHeight,
-    required this.drawShadow,
+    Key key,
+     this.barHeight,
+     this.handleHeight,
+     this.drawShadow,
   })  : colors = colors ?? ChewieProgressColors(),
         super(key: key);
 
   final VideoPlayerController controller;
   final ChewieProgressColors colors;
-  final Function()? onDragStart;
-  final Function()? onDragEnd;
-  final Function()? onDragUpdate;
+  final Function() onDragStart;
+  final Function() onDragEnd;
+  final Function() onDragUpdate;
 
   final double barHeight;
   final double handleHeight;
@@ -58,7 +58,7 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
   }
 
   void _seekToRelativePosition(Offset globalPosition) {
-    final box = context.findRenderObject()! as RenderBox;
+    final box = context.findRenderObject() as RenderBox;
     final Offset tapPos = box.globalToLocal(globalPosition);
     final double relative = tapPos.dx / box.size.width;
     final Duration position = controller.value.duration * relative;
@@ -130,11 +130,11 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
 
 class _ProgressBarPainter extends CustomPainter {
   _ProgressBarPainter({
-    required this.value,
-    required this.colors,
-    required this.barHeight,
-    required this.handleHeight,
-    required this.drawShadow,
+     this.value,
+     this.colors,
+     this.barHeight,
+     this.handleHeight,
+     this.drawShadow,
   });
 
   VideoPlayerValue value;

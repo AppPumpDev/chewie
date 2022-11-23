@@ -19,10 +19,10 @@ import 'package:video_player/video_player.dart';
 
 class CupertinoControls extends StatefulWidget {
   const CupertinoControls({
-    required this.backgroundColor,
-    required this.iconColor,
+     this.backgroundColor,
+     this.iconColor,
     this.showPlayButton = true,
-    Key? key,
+    Key key,
   }) : super(key: key);
 
   final Color backgroundColor;
@@ -37,24 +37,24 @@ class CupertinoControls extends StatefulWidget {
 
 class _CupertinoControlsState extends State<CupertinoControls>
     with SingleTickerProviderStateMixin {
-  late PlayerNotifier notifier;
-  late VideoPlayerValue _latestValue;
-  double? _latestVolume;
-  Timer? _hideTimer;
+   PlayerNotifier notifier;
+   VideoPlayerValue _stValue;
+  double _stVolume;
+  Timer _hideTimer;
   final marginSize = 5.0;
-  Timer? _expandCollapseTimer;
-  Timer? _initTimer;
+  Timer _expandCollapseTimer;
+  Timer _initTimer;
   bool _dragging = false;
-  Duration? _subtitlesPosition;
+  Duration _subtitlesPosition;
   bool _subtitleOn = false;
-  Timer? _bufferingDisplayTimer;
+  Timer _bufferingDisplayTimer;
   bool _displayBufferingIndicator = false;
 
-  late VideoPlayerController controller;
+   VideoPlayerController controller;
 
   // We know that _chewieController is set in didChangeDependencies
-  ChewieController get chewieController => _chewieController!;
-  ChewieController? _chewieController;
+  ChewieController get chewieController => _chewieController;
+  ChewieController _chewieController;
 
   @override
   void initState() {
@@ -64,11 +64,11 @@ class _CupertinoControlsState extends State<CupertinoControls>
 
   @override
   Widget build(BuildContext context) {
-    if (_latestValue.hasError) {
+    if (_stValue.hasError) {
       return chewieController.errorBuilder != null
-          ? chewieController.errorBuilder!(
+          ? chewieController.errorBuilder(
               context,
-              chewieController.videoPlayerController.value.errorDescription!,
+              chewieController.videoPlayerController.value.errorDescription,
             )
           : const Center(
               child: Icon(
@@ -115,7 +115,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
                         0.0,
                         notifier.hideStuff ? barHeight * 0.8 : 0.0,
                       ),
-                      child: _buildSubtitles(chewieController.subtitle!),
+                      child: _buildSubtitles(chewieController.subtitle),
                     ),
                   _buildBottomBar(backgroundColor, iconColor, barHeight),
                 ],
@@ -161,8 +161,8 @@ class _CupertinoControlsState extends State<CupertinoControls>
     final options = <OptionItem>[];
 
     if (chewieController.additionalOptions != null &&
-        chewieController.additionalOptions!(context).isNotEmpty) {
-      options.addAll(chewieController.additionalOptions!(context));
+        chewieController.additionalOptions(context).isNotEmpty) {
+      options.addAll(chewieController.additionalOptions(context));
     }
 
     return GestureDetector(
@@ -170,7 +170,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
         _hideTimer?.cancel();
 
         if (chewieController.optionsBuilder != null) {
-          await chewieController.optionsBuilder!(context, options);
+          await chewieController.optionsBuilder(context, options);
         } else {
           await showCupertinoModalPopup<OptionItem>(
             context: context,
@@ -182,7 +182,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
                   chewieController.optionsTranslation?.cancelButtonText,
             ),
           );
-          if (_latestValue.isPlaying) {
+          if (_stValue.isPlaying) {
             _startHideTimer();
           }
         }
@@ -208,15 +208,15 @@ class _CupertinoControlsState extends State<CupertinoControls>
     if (_subtitlesPosition == null) {
       return const SizedBox();
     }
-    final currentSubtitle = subtitles.getByPosition(_subtitlesPosition!);
+    final currentSubtitle = subtitles.getByPosition(_subtitlesPosition);
     if (currentSubtitle.isEmpty) {
       return const SizedBox();
     }
 
     if (chewieController.subtitleBuilder != null) {
-      return chewieController.subtitleBuilder!(
+      return chewieController.subtitleBuilder(
         context,
-        currentSubtitle.first!.text,
+        currentSubtitle.first.text,
       );
     }
 
@@ -229,7 +229,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Text(
-          currentSubtitle.first!.text.toString(),
+          currentSubtitle.first.text.toString(),
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -284,7 +284,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
                             _buildSpeedButton(controller, iconColor, barHeight),
                           if (chewieController.additionalOptions != null &&
                               chewieController
-                                  .additionalOptions!(context).isNotEmpty)
+                                  .additionalOptions(context).isNotEmpty)
                             _buildOptionsButton(iconColor, barHeight),
                         ],
                       ),
@@ -345,12 +345,12 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   Widget _buildHitArea() {
-    final bool isFinished = _latestValue.position >= _latestValue.duration;
+    final bool isFinished = _stValue.position >= _stValue.duration;
     final bool showPlayButton =
-        widget.showPlayButton && !_latestValue.isPlaying && !_dragging;
+        widget.showPlayButton && !_stValue.isPlaying && !_dragging;
 
     return GestureDetector(
-      onTap: _latestValue.isPlaying
+      onTap: _stValue.isPlaying
           ? _cancelAndRestartTimer
           : () {
               _hideTimer?.cancel();
@@ -381,10 +381,10 @@ class _CupertinoControlsState extends State<CupertinoControls>
       onTap: () {
         _cancelAndRestartTimer();
 
-        if (_latestValue.volume == 0) {
-          controller.setVolume(_latestVolume ?? 0.5);
+        if (_stValue.volume == 0) {
+          controller.setVolume(_stVolume ?? 0.5);
         } else {
-          _latestVolume = controller.value.volume;
+          _stVolume = controller.value.volume;
           controller.setVolume(0.0);
         }
       },
@@ -404,7 +404,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
                   right: buttonPadding,
                 ),
                 child: Icon(
-                  _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                  _stValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
                   color: iconColor,
                   size: 16,
                 ),
@@ -439,7 +439,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   Widget _buildPosition(Color iconColor) {
-    final position = _latestValue.position;
+    final position = _stValue.position;
 
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
@@ -454,7 +454,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   Widget _buildRemaining(Color iconColor) {
-    final position = _latestValue.duration - _latestValue.position;
+    final position = _stValue.duration - _stValue.position;
 
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
@@ -552,7 +552,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
           useRootNavigator: chewieController.useRootNavigator,
           builder: (context) => _PlaybackSpeedDialog(
             speeds: chewieController.playbackSpeeds,
-            selected: _latestValue.playbackSpeed,
+            selected: _stValue.playbackSpeed,
           ),
         );
 
@@ -560,7 +560,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
           controller.setPlaybackSpeed(chosenSpeed);
         }
 
-        if (_latestValue.isPlaying) {
+        if (_stValue.isPlaying) {
           _startHideTimer();
         }
       },
@@ -720,7 +720,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   void _playPause() {
-    final isFinished = _latestValue.position >= _latestValue.duration;
+    final isFinished = _stValue.position >= _stValue.duration;
 
     setState(() {
       if (controller.value.isPlaying) {
@@ -748,15 +748,15 @@ class _CupertinoControlsState extends State<CupertinoControls>
     _cancelAndRestartTimer();
     final beginning = Duration.zero.inMilliseconds;
     final skip =
-        (_latestValue.position - const Duration(seconds: 15)).inMilliseconds;
+        (_stValue.position - const Duration(seconds: 15)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
   }
 
   void _skipForward() {
     _cancelAndRestartTimer();
-    final end = _latestValue.duration.inMilliseconds;
+    final end = _stValue.duration.inMilliseconds;
     final skip =
-        (_latestValue.position + const Duration(seconds: 15)).inMilliseconds;
+        (_stValue.position + const Duration(seconds: 15)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.min(skip, end)));
   }
 
@@ -785,7 +785,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
     if (chewieController.progressIndicatorDelay != null) {
       if (controller.value.isBuffering) {
         _bufferingDisplayTimer ??= Timer(
-          chewieController.progressIndicatorDelay!,
+          chewieController.progressIndicatorDelay,
           _bufferingTimerTimeout,
         );
       } else {
@@ -798,7 +798,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
     }
 
     setState(() {
-      _latestValue = controller.value;
+      _stValue = controller.value;
       _subtitlesPosition = controller.value.position;
     });
   }
@@ -806,9 +806,9 @@ class _CupertinoControlsState extends State<CupertinoControls>
 
 class _PlaybackSpeedDialog extends StatelessWidget {
   const _PlaybackSpeedDialog({
-    Key? key,
-    required List<double> speeds,
-    required double selected,
+    Key key,
+     List<double> speeds,
+     double selected,
   })  : _speeds = speeds,
         _selected = selected,
         super(key: key);

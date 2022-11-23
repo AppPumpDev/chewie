@@ -18,7 +18,7 @@ import 'package:video_player/video_player.dart';
 class MaterialDesktopControls extends StatefulWidget {
   const MaterialDesktopControls({
     this.showPlayButton = true,
-    Key? key,
+    Key key,
   }) : super(key: key);
 
   final bool showPlayButton;
@@ -31,27 +31,27 @@ class MaterialDesktopControls extends StatefulWidget {
 
 class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     with SingleTickerProviderStateMixin {
-  late PlayerNotifier notifier;
-  late VideoPlayerValue _latestValue;
-  double? _latestVolume;
-  Timer? _hideTimer;
-  Timer? _initTimer;
-  late var _subtitlesPosition = Duration.zero;
+   PlayerNotifier notifier;
+   VideoPlayerValue _stValue;
+  double _stVolume;
+  Timer _hideTimer;
+  Timer _initTimer;
+   var _subtitlesPosition = Duration.zero;
   bool _subtitleOn = false;
-  Timer? _showAfterExpandCollapseTimer;
+  Timer _showAfterExpandCollapseTimer;
   bool _dragging = false;
   bool _displayTapped = false;
-  Timer? _bufferingDisplayTimer;
+  Timer _bufferingDisplayTimer;
   bool _displayBufferingIndicator = false;
 
   final barHeight = 48.0 * 1.5;
   final marginSize = 5.0;
 
-  late VideoPlayerController controller;
-  ChewieController? _chewieController;
+   VideoPlayerController controller;
+  ChewieController _chewieController;
 
   // We know that _chewieController is set in didChangeDependencies
-  ChewieController get chewieController => _chewieController!;
+  ChewieController get chewieController => _chewieController;
 
   @override
   void initState() {
@@ -61,10 +61,10 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
 
   @override
   Widget build(BuildContext context) {
-    if (_latestValue.hasError) {
+    if (_stValue.hasError) {
       return chewieController.errorBuilder?.call(
             context,
-            chewieController.videoPlayerController.value.errorDescription!,
+            chewieController.videoPlayerController.value.errorDescription,
           ) ??
           const Center(
             child: Icon(
@@ -101,7 +101,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
                         notifier.hideStuff ? barHeight * 0.8 : 0.0,
                       ),
                       child:
-                          _buildSubtitles(context, chewieController.subtitle!),
+                          _buildSubtitles(context, chewieController.subtitle),
                     ),
                   _buildBottomBar(context),
                 ],
@@ -140,7 +140,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     super.didChangeDependencies();
   }
 
-  Widget _buildSubtitleToggle({IconData? icon, bool isPadded = false}) {
+  Widget _buildSubtitleToggle({IconData icon, bool isPadded = false}) {
     return IconButton(
       padding: isPadded ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
       icon: Icon(icon, color: _subtitleOn ? Colors.white : Colors.grey[700]),
@@ -149,7 +149,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
   }
 
   Widget _buildOptionsButton({
-    IconData? icon,
+    IconData icon,
     bool isPadded = false,
   }) {
     final options = <OptionItem>[
@@ -165,8 +165,8 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     ];
 
     if (chewieController.additionalOptions != null &&
-        chewieController.additionalOptions!(context).isNotEmpty) {
-      options.addAll(chewieController.additionalOptions!(context));
+        chewieController.additionalOptions(context).isNotEmpty) {
+      options.addAll(chewieController.additionalOptions(context));
     }
 
     return AnimatedOpacity(
@@ -178,7 +178,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
           _hideTimer?.cancel();
 
           if (chewieController.optionsBuilder != null) {
-            await chewieController.optionsBuilder!(context, options);
+            await chewieController.optionsBuilder(context, options);
           } else {
             await showModalBottomSheet<OptionItem>(
               context: context,
@@ -192,7 +192,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
             );
           }
 
-          if (_latestValue.isPlaying) {
+          if (_stValue.isPlaying) {
             _startHideTimer();
           }
         },
@@ -214,9 +214,9 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     }
 
     if (chewieController.subtitleBuilder != null) {
-      return chewieController.subtitleBuilder!(
+      return chewieController.subtitleBuilder(
         context,
-        currentSubtitle.first!.text,
+        currentSubtitle.first.text,
       );
     }
 
@@ -229,7 +229,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Text(
-          currentSubtitle.first!.text.toString(),
+          currentSubtitle.first.text.toString(),
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -242,7 +242,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
   AnimatedOpacity _buildBottomBar(
     BuildContext context,
   ) {
-    final iconColor = Theme.of(context).textTheme.button!.color;
+    final iconColor = Theme.of(context).textTheme.button.color;
 
     return AnimatedOpacity(
       opacity: notifier.hideStuff ? 0.0 : 1.0,
@@ -270,7 +270,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
                     const Spacer(),
                     if (chewieController.showControls &&
                         chewieController.subtitle != null &&
-                        chewieController.subtitle!.isNotEmpty)
+                        chewieController.subtitle.isNotEmpty)
                       _buildSubtitleToggle(icon: Icons.subtitles),
                     if (chewieController.showOptions)
                       _buildOptionsButton(icon: Icons.settings),
@@ -327,13 +327,13 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
   }
 
   Widget _buildHitArea() {
-    final bool isFinished = _latestValue.position >= _latestValue.duration;
+    final bool isFinished = _stValue.position >= _stValue.duration;
     final bool showPlayButton =
         widget.showPlayButton && !_dragging && !notifier.hideStuff;
 
     return GestureDetector(
       onTap: () {
-        if (_latestValue.isPlaying) {
+        if (_stValue.isPlaying) {
           if (_displayTapped) {
             setState(() {
               notifier.hideStuff = true;
@@ -369,7 +369,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
       useRootNavigator: chewieController.useRootNavigator,
       builder: (context) => PlaybackSpeedDialog(
         speeds: chewieController.playbackSpeeds,
-        selected: _latestValue.playbackSpeed,
+        selected: _stValue.playbackSpeed,
       ),
     );
 
@@ -377,7 +377,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
       controller.setPlaybackSpeed(chosenSpeed);
     }
 
-    if (_latestValue.isPlaying) {
+    if (_stValue.isPlaying) {
       _startHideTimer();
     }
   }
@@ -389,10 +389,10 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
       onTap: () {
         _cancelAndRestartTimer();
 
-        if (_latestValue.volume == 0) {
-          controller.setVolume(_latestVolume ?? 0.5);
+        if (_stValue.volume == 0) {
+          controller.setVolume(_stVolume ?? 0.5);
         } else {
-          _latestVolume = controller.value.volume;
+          _stVolume = controller.value.volume;
           controller.setVolume(0.0);
         }
       },
@@ -406,7 +406,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
               right: 15.0,
             ),
             child: Icon(
-              _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
+              _stValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
               color: Colors.white,
             ),
           ),
@@ -434,9 +434,9 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     );
   }
 
-  Widget _buildPosition(Color? iconColor) {
-    final position = _latestValue.position;
-    final duration = _latestValue.duration;
+  Widget _buildPosition(Color iconColor) {
+    final position = _stValue.position;
+    final duration = _stValue.duration;
 
     return Text(
       '${formatDuration(position)} / ${formatDuration(duration)}',
@@ -497,7 +497,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
   }
 
   void _playPause() {
-    final isFinished = _latestValue.position >= _latestValue.duration;
+    final isFinished = _stValue.position >= _stValue.duration;
 
     setState(() {
       if (controller.value.isPlaying) {
@@ -546,7 +546,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     if (chewieController.progressIndicatorDelay != null) {
       if (controller.value.isBuffering) {
         _bufferingDisplayTimer ??= Timer(
-          chewieController.progressIndicatorDelay!,
+          chewieController.progressIndicatorDelay,
           _bufferingTimerTimeout,
         );
       } else {
@@ -559,7 +559,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
     }
 
     setState(() {
-      _latestValue = controller.value;
+      _stValue = controller.value;
       _subtitlesPosition = controller.value.position;
     });
   }

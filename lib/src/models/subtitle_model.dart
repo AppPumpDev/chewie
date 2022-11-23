@@ -1,13 +1,13 @@
 class Subtitles {
   Subtitles(this.subtitle);
 
-  final List<Subtitle?> subtitle;
+  final List<Subtitle> subtitle;
 
   bool get isEmpty => subtitle.isEmpty;
 
   bool get isNotEmpty => !isEmpty;
 
-  List<Subtitle?> getByPosition(Duration position) {
+  List<Subtitle> getByPosition(Duration position) {
     final found = subtitle.where((item) {
       if (item != null) return position >= item.start && position <= item.end;
       return false;
@@ -19,16 +19,16 @@ class Subtitles {
 
 class Subtitle {
   Subtitle({
-    required this.index,
-    required this.start,
-    required this.end,
-    required this.text,
+     this.index,
+     this.start,
+     this.end,
+     this.text,
   });
 
   Subtitle copyWith({
-    int? index,
-    Duration? start,
-    Duration? end,
+    int index,
+    Duration start,
+    Duration end,
     dynamic text,
   }) {
     return Subtitle(

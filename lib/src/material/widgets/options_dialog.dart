@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class OptionsDialog extends StatefulWidget {
   const OptionsDialog({
-    Key? key,
-    required this.options,
+    Key key,
+    this.options,
     this.cancelButtonText,
   }) : super(key: key);
 
   final List<OptionItem> options;
-  final String? cancelButtonText;
+  final String cancelButtonText;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -29,12 +29,12 @@ class _OptionsDialogState extends State<OptionsDialog> {
             itemBuilder: (context, i) {
               return ListTile(
                 onTap: widget.options[i].onTap != null
-                    ? widget.options[i].onTap!
+                    ? widget.options[i].onTap
                     : null,
                 leading: Icon(widget.options[i].iconData),
                 title: Text(widget.options[i].title),
                 subtitle: widget.options[i].subtitle != null
-                    ? Text(widget.options[i].subtitle!)
+                    ? Text(widget.options[i].subtitle)
                     : null,
               );
             },

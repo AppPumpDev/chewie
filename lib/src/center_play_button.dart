@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 
 class CenterPlayButton extends StatelessWidget {
   const CenterPlayButton({
-    Key? key,
-    required this.backgroundColor,
+    Key key,
+     this.backgroundColor,
     this.iconColor,
-    required this.show,
-    required this.isPlaying,
-    required this.isFinished,
+     this.show,
+     this.isPlaying,
+     this.isFinished,
     this.onPressed,
   }) : super(key: key);
 
   final Color backgroundColor;
-  final Color? iconColor;
+  final Color iconColor;
   final bool show;
   final bool isPlaying;
   final bool isFinished;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

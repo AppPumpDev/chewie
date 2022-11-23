@@ -7,19 +7,19 @@ import 'package:video_player/video_player.dart';
 class CupertinoVideoProgressBar extends StatelessWidget {
   CupertinoVideoProgressBar(
     this.controller, {
-    ChewieProgressColors? colors,
+    ChewieProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
-    Key? key,
+    Key key,
   })  : colors = colors ?? ChewieProgressColors(),
         super(key: key);
 
   final VideoPlayerController controller;
   final ChewieProgressColors colors;
-  final Function()? onDragStart;
-  final Function()? onDragEnd;
-  final Function()? onDragUpdate;
+  final Function() onDragStart;
+  final Function() onDragEnd;
+  final Function() onDragUpdate;
 
   @override
   Widget build(BuildContext context) {
