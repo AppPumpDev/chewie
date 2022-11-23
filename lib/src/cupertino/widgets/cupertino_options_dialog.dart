@@ -3,13 +3,13 @@ import 'package:flutter/cupertino.dart';
 
 class CupertinoOptionsDialog extends StatefulWidget {
   const CupertinoOptionsDialog({
-    Key? key,
-    required this.options,
+    Key key,
+    this.options,
     this.cancelButtonText,
   }) : super(key: key);
 
   final List<OptionItem> options;
-  final String? cancelButtonText;
+  final String cancelButtonText;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -24,7 +24,7 @@ class _CupertinoOptionsDialogState extends State<CupertinoOptionsDialog> {
         actions: widget.options
             .map(
               (option) => CupertinoActionSheetAction(
-                onPressed: () => option.onTap!(),
+                onPressed: () => option.onTap(),
                 child: Text(option.title),
               ),
             )

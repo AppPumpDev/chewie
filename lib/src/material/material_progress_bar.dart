@@ -7,20 +7,20 @@ class MaterialVideoProgressBar extends StatelessWidget {
   MaterialVideoProgressBar(
     this.controller, {
     this.height = kToolbarHeight,
-    ChewieProgressColors? colors,
+    ChewieProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
-    Key? key,
+    Key key,
   })  : colors = colors ?? ChewieProgressColors(),
         super(key: key);
 
   final double height;
   final VideoPlayerController controller;
   final ChewieProgressColors colors;
-  final Function()? onDragStart;
-  final Function()? onDragEnd;
-  final Function()? onDragUpdate;
+  final Function() onDragStart;
+  final Function() onDragEnd;
+  final Function() onDragUpdate;
 
   @override
   Widget build(BuildContext context) {

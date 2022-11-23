@@ -3,27 +3,34 @@ import 'package:flutter/material.dart';
 /// A widget that animates implicitly between a play and a pause icon.
 class AnimatedPlayPause extends StatefulWidget {
   const AnimatedPlayPause({
-    Key? key,
-    required this.playing,
+    Key key,
+     this.playing,
     this.size,
     this.color,
   }) : super(key: key);
 
-  final double? size;
+  final double size;
   final bool playing;
-  final Color? color;
+  final Color color;
 
   @override
   State<StatefulWidget> createState() => AnimatedPlayPauseState();
 }
 
 class AnimatedPlayPauseState extends State<AnimatedPlayPause>
-    with SingleTickerProviderStateMixin {
-  late final animationController = AnimationController(
-    vsync: this,
-    value: widget.playing ? 1 : 0,
-    duration: const Duration(milliseconds: 400),
-  );
+    with SingleTickerProviderStateMixin<AnimatedPlayPause> {
+  AnimationController animationController;
+
+   @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      value: widget.playing ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 400),
+    );
+  }
+
 
   @override
   void didUpdateWidget(AnimatedPlayPause oldWidget) {

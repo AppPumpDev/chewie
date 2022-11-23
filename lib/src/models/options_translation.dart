@@ -5,14 +5,14 @@ class OptionsTranslation {
     this.cancelButtonText,
   });
 
-  String? playbackSpeedButtonText;
-  String? subtitlesButtonText;
-  String? cancelButtonText;
+  String playbackSpeedButtonText;
+  String subtitlesButtonText;
+  String cancelButtonText;
 
   OptionsTranslation copyWith({
-    String? playbackSpeedButtonText,
-    String? subtitlesButtonText,
-    String? cancelButtonText,
+    String playbackSpeedButtonText,
+    String subtitlesButtonText,
+    String cancelButtonText,
   }) {
     return OptionsTranslation(
       playbackSpeedButtonText:
